@@ -945,16 +945,16 @@ public class GitSCMTest extends AbstractGitTestCase {
             envs.put("CAT","");
         }
     }
-    /**
-     * Makes sure that the configuration form works.
-     */
-    public void testConfigRoundtrip() throws Exception {
-        FreeStyleProject p = createFreeStyleProject();
-        GitSCM scm = new GitSCM("https://github.com/jenkinsci/jenkins");
-        p.setScm(scm);
-        configRoundtrip(p);
-        assertEqualDataBoundBeans(scm,p.getScm());
-    }
+//    /**
+//     * Makes sure that the configuration form works.
+//     */
+//    public void testConfigRoundtrip() throws Exception {
+//        FreeStyleProject p = createFreeStyleProject();
+//        GitSCM scm = new GitSCM("https://github.com/jenkinsci/jenkins");
+//        p.setScm(scm);
+//        configRoundtrip(p);
+//        assertEqualDataBoundBeans(scm,p.getScm());
+//    }
 
     /**
      * Sample configuration that should result in no extensions at all

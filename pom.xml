@@ -273,6 +273,12 @@
       <version>1.9.5</version>
       <scope>test</scope>
     </dependency>
+	<dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty-util</artifactId>
+      <version>6.1.26</version>
+      <scope>test</scope>
+    </dependency>
 
 
     <dependency><!-- we contribute AbstractBuildParameters for Git if it's available -->
