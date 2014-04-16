@@ -78,7 +78,11 @@ public class DefaultBuildChooser extends BuildChooser {
             // so check all remotes to fully qualify this branch spec
             for (RemoteConfig config : gitSCM.getRepositories()) {
                 String repository = config.getName();
-                String fqbn = repository + "/" + branchSpec;
+                String fqbn = "refs/remotes/" + repository + "/" + branchSpec;
+                verbose(listener, "Qualifying {0} as a branch in repository {1} -> {2}", branchSpec, repository, fqbn);
+                revisions.addAll(getHeadRevision(isPollCall, fqbn, git, listener, data));
+                //Also check if a tag is meant by this spec
+                fqbn = "refs/tags/" + branchSpec;
                 verbose(listener, "Qualifying {0} as a branch in repository {1} -> {2}", branchSpec, repository, fqbn);
                 revisions.addAll(getHeadRevision(isPollCall, fqbn, git, listener, data));
             }

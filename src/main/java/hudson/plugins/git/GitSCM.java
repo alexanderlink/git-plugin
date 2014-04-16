@@ -801,14 +801,16 @@ public class GitSCM extends GitSCMBackwardCompatibility {
         }
 
         if (candidates.size() > 1) {
-            log.println("Multiple candidate revisions");
-            AbstractProject<?, ?> project = build.getProject();
-            if (!project.isDisabled()) {
-                log.println("Scheduling another build to catch up with " + project.getFullDisplayName());
-                if (!project.scheduleBuild(0, new SCMTrigger.SCMTriggerCause())) {
-                    log.println("WARNING: multiple candidate revisions, but unable to schedule build of " + project.getFullDisplayName());
-                }
-            }
+            log.println("Multiple candidate revisions: " + candidates);
+            log.println("Choosing first one (by priority): " + candidates.iterator().next());
+//TODO: Discuss/remove below. Why should it help to retrigger a build if the branchSpec is ambiguous!? 
+//            AbstractProject<?, ?> project = build.getProject();
+//            if (!project.isDisabled()) {
+//                log.println("Scheduling another build to catch up with " + project.getFullDisplayName());
+//                if (!project.scheduleBuild(0, new SCMTrigger.SCMTriggerCause())) {
+//                    log.println("WARNING: multiple candidate revisions, but unable to schedule build of " + project.getFullDisplayName());
+//                }
+//            }
         }
         Revision rev = candidates.iterator().next();
         Revision marked = rev;

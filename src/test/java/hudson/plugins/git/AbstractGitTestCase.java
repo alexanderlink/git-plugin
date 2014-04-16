@@ -1,11 +1,9 @@
 package hudson.plugins.git;
 
-import com.google.common.collect.Lists;
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.model.*;
 import hudson.plugins.git.extensions.GitSCMExtension;
-import hudson.plugins.git.extensions.impl.CleanBeforeCheckout;
 import hudson.plugins.git.extensions.impl.DisableRemotePoll;
 import hudson.plugins.git.extensions.impl.PathRestriction;
 import hudson.plugins.git.extensions.impl.RelativeTargetDirectory;
@@ -138,9 +136,17 @@ public abstract class AbstractGitTestCase extends HudsonTestCase {
                                           String relativeTargetDir, String excludedRegions,
                                           String excludedUsers, String localBranch, boolean fastRemotePoll,
                                           String includedRegions, List<SparseCheckoutPath> sparseCheckoutPaths) throws Exception {
+        return setupProject(null, branches, authorOrCommitter, relativeTargetDir, excludedRegions, excludedUsers, 
+                    localBranch, fastRemotePoll, includedRegions, sparseCheckoutPaths);
+    }
+    
+    protected FreeStyleProject setupProject(List<UserRemoteConfig> remoteConfigs, List<BranchSpec> branches, boolean authorOrCommitter,
+                String relativeTargetDir, String excludedRegions,
+                String excludedUsers, String localBranch, boolean fastRemotePoll,
+                String includedRegions, List<SparseCheckoutPath> sparseCheckoutPaths) throws Exception {
         FreeStyleProject project = createFreeStyleProject();
         GitSCM scm = new GitSCM(
-                createRemoteRepositories(),
+                remoteConfigs != null ? remoteConfigs : createRemoteRepositories(),
                 branches,
                 false, Collections.<SubmoduleConfig>emptyList(),
                 null, null,
@@ -153,7 +159,7 @@ public abstract class AbstractGitTestCase extends HudsonTestCase {
         if (excludedRegions!=null || includedRegions!=null)
             scm.getExtensions().add(new PathRestriction(includedRegions,excludedRegions));
 
-        scm.getExtensions().add(new SparseCheckoutPaths(sparseCheckoutPaths));
+        if(sparseCheckoutPaths != null) scm.getExtensions().add(new SparseCheckoutPaths(sparseCheckoutPaths));
 
         project.setScm(scm);
         project.getBuildersList().add(new CaptureEnvironmentBuilder());
