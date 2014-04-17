@@ -83,6 +83,11 @@ public class BranchSpecsTest extends AbstractGitTestCase
         check("refs/heads/remotes/origin/master", COMMITS.getProperty("refs/heads/remotes/origin/master"));
     }
 
+    @Test
+    public void testAnyMaster() throws Exception {
+        check("**master", COMMITS.getProperty("refs/heads/master"));
+    }
+
     private void check(String configuredBranchSpec, String expectedRevision) throws Exception
     {
         FreeStyleProject project = setupProject(REMOTE, branchSpec(configuredBranchSpec), 
@@ -91,6 +96,9 @@ public class BranchSpecsTest extends AbstractGitTestCase
         BuildData buildData = ((GitSCM)project.getScm()).getBuildData(build);
         Revision lastBuiltRevision = buildData.getLastBuiltRevision();
         assertEquals("Checked out revision unexpected", expectedRevision, lastBuiltRevision.getSha1().getName());
+        assertFalse("New build in queue", project.isInQueue());
+        assertFalse("New build running", project.isBuilding());
+        assertEquals("More builds than expected", 1, project.getLastBuild().getNumber());
     }
 
     private List<BranchSpec> branchSpec(String branchSpecString)

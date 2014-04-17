@@ -279,6 +279,12 @@
       <version>4.3.3</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>1.6</version>
+      <scope>test</scope>
+    </dependency>
 
 
     <dependency><!-- we contribute AbstractBuildParameters for Git if it's available -->

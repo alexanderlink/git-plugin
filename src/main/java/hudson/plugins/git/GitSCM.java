@@ -418,6 +418,7 @@ public class GitSCM extends GitSCMBackwardCompatibility {
 
         // replace repository wildcard with repository name
         if (branch.startsWith("*/")) {
+            //TODO: What about feature1/master, feature2/master,... */master should build any matching hierarchical branch.
             branch = repository + branch.substring(1);
         }
 
@@ -802,15 +803,20 @@ public class GitSCM extends GitSCMBackwardCompatibility {
 
         if (candidates.size() > 1) {
             log.println("Multiple candidate revisions: " + candidates);
-            log.println("Choosing first one (by priority): " + candidates.iterator().next());
-//TODO: Discuss/remove below. Why should it help to retrigger a build if the branchSpec is ambiguous!? 
-//            AbstractProject<?, ?> project = build.getProject();
-//            if (!project.isDisabled()) {
-//                log.println("Scheduling another build to catch up with " + project.getFullDisplayName());
-//                if (!project.scheduleBuild(0, new SCMTrigger.SCMTriggerCause())) {
-//                    log.println("WARNING: multiple candidate revisions, but unable to schedule build of " + project.getFullDisplayName());
-//                }
-//            }
+            if(singleBranch == null) {
+                //TODO: When do we really expect multiple candidates, when do we only have ambiguous results!?
+                //      In case of wildcards match several branches we want to trigger several builds.
+                //      Are there additional other cases where we want to trigger additional builds?
+                AbstractProject<?, ?> project = build.getProject();
+                if (!project.isDisabled()) {
+                    log.println("Scheduling another build to catch up with " + project.getFullDisplayName());
+                    if (!project.scheduleBuild(0, new SCMTrigger.SCMTriggerCause())) {
+                        log.println("WARNING: multiple candidate revisions, but unable to schedule build of " + project.getFullDisplayName());
+                    }
+                }
+            } else {
+                log.println("Choosing first one (by priority): " + candidates.iterator().next());
+            }
         }
         Revision rev = candidates.iterator().next();
         Revision marked = rev;
